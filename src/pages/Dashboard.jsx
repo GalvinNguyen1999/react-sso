@@ -2,25 +2,17 @@
 import ReactJson from 'react-json-view'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { RENDER_API_ROOT } from '../utils/constants'
+import customAxiosInstance from '../utils/customAxios'
 
 const Dashboard = () => {
-  const { isLoading, user, getAccessTokenSilently } = useAuth0()
+  const { isLoading, user } = useAuth0()
   const [privateUsers, setPrivateUsers] = useState(null)
 
   useEffect(() => {
     const fetchPrivateUsers = async () => {
       try {
-        const accessToken = await getAccessTokenSilently()
-
-
-        const res = await axios.get(`${RENDER_API_ROOT}/api-v1/users/private/get_all`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        })
-        
+        const res = await customAxiosInstance.get(`${RENDER_API_ROOT}/api-v1/users/private/get_all`)
         setPrivateUsers(res.data)
       } catch (error) {
         console.error('Error fetching private users:', error)
@@ -28,7 +20,7 @@ const Dashboard = () => {
     }
 
     fetchPrivateUsers()
-  }, [getAccessTokenSilently])
+  }, [])
 
   return (
     <div className="dashboard">
