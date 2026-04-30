@@ -16,7 +16,8 @@ function App() {
           {isAuthenticated ? <LogoutButton /> : <LoginButton />}
         </div>
         {/* Phần dashboard sau khi đăng nhập */}
-        <Dashboard />
+        {/* <Dashboard /> */}
+        {isAuthenticated && <Dashboard /> }
       </div>      
     </div>
   )

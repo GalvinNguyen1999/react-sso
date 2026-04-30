@@ -2,6 +2,7 @@
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
+import { RENDER_API_ROOT } from './utils/constants.js'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Auth0Provider
@@ -9,6 +10,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     clientId='IfLk2S56b0VOcTUdJhReXQaNj4GCxCSE'
     authorizationParams={{
       redirect_uri: window.location.origin,
+      audience: RENDER_API_ROOT
     }}
     useRefreshTokens={true}
     cacheLocation='localstorage'
