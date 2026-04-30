@@ -1,11 +1,34 @@
 // Author: TrungQuanDev | https://youtube.com/@trungquandev
 import ReactJson from 'react-json-view'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+import { RENDER_API_ROOT } from '../utils/constants'
 
 const Dashboard = () => {
-  const { isAuthenticated, isLoading, user } = useAuth0()
+  const { isLoading, user, getAccessTokenSilently } = useAuth0()
+  const [privateUsers, setPrivateUsers] = useState(null)
 
-  if (!isAuthenticated) return null
+  useEffect(() => {
+    const fetchPrivateUsers = async () => {
+      try {
+        const accessToken = await getAccessTokenSilently()
+
+
+        const res = await axios.get(`${RENDER_API_ROOT}/api-v1/users/private/get_all`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        })
+        
+        setPrivateUsers(res.data)
+      } catch (error) {
+        console.error('Error fetching private users:', error)
+      }
+    }
+
+    fetchPrivateUsers()
+  }, [getAccessTokenSilently])
 
   return (
     <div className="dashboard">
@@ -36,34 +59,18 @@ const Dashboard = () => {
       </div>
 
       <div className="user-from-our-database">
-        <div className="title">User from our database:</div>
-        <div className="preview-user">
-          {/* <div className="loading">Loading...</div> */}
-          <img className="user-avatar" src={'https://trungquandev.com/wp-content/uploads/2024/03/white-bg-main-avatar-circle-min-trungquandev-codetq-375.jpeg'} alt={'trungquandev'} />
-          <div className="user-info">
-            <p>ID: <span className="value">random-108184243235574894333</span></p>
-            <p>Email: <span className="value">trungquandev@gmail.com</span></p>
-            <p>Name: <span className="value">TrungQuanDev</span></p>
-          </div>
-        </div>
-        <div className="more-info">
-          <ReactJson
-            enableClipboard={false}
-            collapsed={true}
-            theme={'google'}
-            src={{
-              "given_name": "Ragdoll",
-              "family_name": "Cats",
-              "nickname": "quanlightning2",
-              "name": "TrungQuanDev",
-              "picture": "https://trungquandev.com/wp-content/uploads/2024/03/white-bg-main-avatar-circle-min-trungquandev-codetq-375.jpeg",
-              "updated_at": "2024-07-10T09:59:37.603Z",
-              "email": "quanlightning2@gmail.com",
-              "email_verified": true,
-              "sub": "google-oauth2|108184243235574894333"
-            }}
-          />
-        </div>
+        <div className="title">Private users from our database:</div>
+          {(privateUsers || []).length ? (
+            <div className="list-private-users">
+              {privateUsers.map((privateUser) => (
+                <div key={privateUser.email} className="private-user">
+                  <p>Email: <span className="value">{privateUser.email}</span></p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="loading">No private users found.</div>
+          )}
       </div>
     </div>
   )
