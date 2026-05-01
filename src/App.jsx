@@ -5,11 +5,24 @@ import LoginButton from './components/LoginButton'
 import LogoutButton from './components/LogoutButton'
 import { useAuth0 } from '@auth0/auth0-react'
 import { injectFn } from './utils/customAxios'
+import { useEffect } from 'react'
 
 function App() {
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
 
   injectFn(getAccessTokenSilently)
+
+  useEffect(() => {
+    const checkSSO = async () => {
+      try {
+        await getAccessTokenSilently()
+      } catch (error) {
+        console.error('Error checking SSO:', error)
+      }
+    }
+
+    checkSSO()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="app-container">
