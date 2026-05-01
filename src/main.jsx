@@ -13,7 +13,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       audience: RENDER_API_ROOT
     }}
     useRefreshTokens={true}
-    cacheLocation='localstorage'
+    useRefreshTokensFallback={true}
+    // cacheLocation='localstorage'
+    cookieDomain='.cuong.local'
   >
     <App />
   </Auth0Provider>
